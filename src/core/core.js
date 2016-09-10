@@ -1514,6 +1514,8 @@ Crafty.extend({
                         dt: dt,
                         gameTime: gameTime
                     };
+                    // Handle any changes due to user input
+                    Crafty.trigger("EnterFrameInput", frameData);
                     // Everything that changes over time hooks into this event
                     Crafty.trigger("EnterFrame", frameData);
                     // Event that happens after "EnterFrame", e.g. for resolivng collisions applied through movement during "EnterFrame" events
@@ -1569,13 +1571,13 @@ Crafty.extend({
              * @param timestep - the duration to pass each frame.  Defaults to milliSecPerFrame (20 ms) if not specified.
              */
             simulateFrames: function (frames, timestep) {
-                if (typeof timestep === "undefined")
-                    timestep = milliSecPerFrame;
+                timestep = timestep || milliSecPerFrame;
                 while (frames-- > 0) {
                     var frameData = {
                         frame: frame++,
                         dt: timestep
                     };
+                    Crafty.trigger("EnterFrameInput", frameData);
                     Crafty.trigger("EnterFrame", frameData);
                     Crafty.trigger("ExitFrame", frameData);
                 }

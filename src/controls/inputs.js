@@ -118,7 +118,7 @@ Crafty.extend({
     
     resetKeyDown: function() {
         // Tell all the keys they're no longer held down
-        for (var k in Crafty.keys) {
+        for (var k in Crafty.keys) { 
              if (Crafty.keydown[Crafty.keys[k]]) {
                  this.trigger("KeyUp", {
                      key: Crafty.keys[k]
