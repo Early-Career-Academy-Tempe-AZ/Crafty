@@ -180,10 +180,10 @@ Crafty.c("Multiway", {
     events: {
         "EnterFrame": function() {
             if (!this.disableControls) {
-                if (typeof this._speed.x !== 'undefined'){
+                if (typeof this._speed.x !== 'undefined' && this._speed.x !== null){
                     this.vx = this._speed.x * this._dpadDirection.x;
                 }
-                if (typeof this._speed.y !== 'undefined') {
+                if (typeof this._speed.y !== 'undefined' && this._speed.y !== null) {
                     this.vy = this._speed.y * this._dpadDirection.y;
                 }
             }
@@ -224,7 +224,6 @@ Crafty.c("Multiway", {
         } else {
             keys = speed;
         }
-        // TODO handle the case where the user wants to provide options but not a speed?
         inputSystem.defineDpad(this._dpadName, keys, options);
         this.linkDpad(this._dpadName, this._updateDpad);
 

@@ -41,8 +41,8 @@ require('./graphics/viewport');
 require('./isometric/diamond-iso');
 require('./isometric/isometric');
 
-require('./controls/input-systems');
 require('./controls/inputs');
+require('./controls/controls-system');
 require('./controls/controls');
 require('./controls/device');
 require('./controls/keycodes');

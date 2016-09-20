@@ -23,7 +23,7 @@ module.exports = function() {
     requireNew('./spatial/rect-manager');
     requireNew('./spatial/math');
 
-    requireNew('./controls/input-systems');
+    require('./controls/controls-system');
     requireNew('./controls/controls');
     requireNew('./controls/keycodes');
 

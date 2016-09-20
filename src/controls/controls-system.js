@@ -19,9 +19,8 @@ InputButtonGroup.prototype = {
 // Allow the creation of custom inputs
 Crafty.s("Controls", {
     init: function () {
-        // internal array to store definitions
+        // internal object to store definitions
         this._dpads = {};
-        this._dpadKeys = {};
     },
 
     events: {
@@ -50,7 +49,7 @@ Crafty.s("Controls", {
     },
 
     defineDpad: function (name, definition, options) {
-        // Store the name/definitioni pair
+        // Store the name/definition pair
         if (this._dpads[name]) delete this._dpads[name];
 
         var directionDict = {};
@@ -60,24 +59,30 @@ Crafty.s("Controls", {
 
             // create a mapping of directions to all associated keycodes
             if (!directionDict[direction]) {
-                directionDict[direction] = {
-                    keyCodes: [keyCode]
-                };
-            } else {
-                directionDict[direction].keyCodes.push(keyCode);
+                directionDict[direction] = [];
             }
+            directionDict[direction].push(keyCode);
+            
         }
 
         // Create a useful definition from the input format that tracks state
         var parsedDefinition = {};
         for (var d in directionDict) {
             parsedDefinition[d] = {
-                input: new InputButtonGroup(directionDict[d].keyCodes),
+                input: new InputButtonGroup(directionDict[d]),
                 active: false,
                 n: this.parseDirection(d)
             };
         }
-
+        if (typeof options === 'undefined') {
+            options = {};
+        }
+        if (typeof options.normalize === 'undefined'){
+            options.normalize = false;
+        }
+        if (typeof options.allowMultipleDirections === 'undefined') {
+            options.allowMultipleDirections = true;
+        }
         // Create the fully realized dpad object
         this._dpads[name] = {
             name: name,
@@ -87,8 +92,8 @@ Crafty.s("Controls", {
             oldX: 0,
             oldY: 0,
             event: { x: 0, y: 0, name: name },
-            normalize: (options && options.normalize) || false,
-            allowMultipleDirections: (options && options.allowMultipleDirections)|| true
+            normalize: options.normalize,
+            allowMultipleDirections: options.allowMultipleDirections
         };
     },
 
@@ -123,20 +128,18 @@ Crafty.s("Controls", {
     },
 
     updateInput: function (dpad, multi) {
-        var d;
-        if (!multi) {
+        var d, dir;
+        for (d in dpad.directions) {
+            dir = dpad.directions[d];
             // If any of the directions are already active, and the key is held down, stick with that one
-            for (d in dpad.directions) {
-                if (dpad.directions[d].active) {
-                    if (dpad.directions[d].input.isActive()) return;
-                    break; // Only one should be active, so skip checking the rest
-                }
+            if (!multi && dir.active) {
+                if (dir.input.isActive()) return;
             }
+            dir.active = false;
         }
 
         for (d in dpad.directions) {
-            var dir = dpad.directions[d];
-            dir.active = false;
+            dir = dpad.directions[d];
             if (dir.input.isActive()) {
                 dir.active = true;
                 if (!multi) return;
